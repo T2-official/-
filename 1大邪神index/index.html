@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="keywords" content="try out">
+	<meta name="author" content="George">
+	<title>T2 waitingroom</title>
+	<script src="https://cdn.staticfile.org/vue/3.0.5/vue.global.js"></script>
+	<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+	<style>
+		/*id 优先级大于> class*/
+		:root {
+			--lb-color: lightblue;
+		}
+
+		body {
+			background-image: url("18.jpg");
+			/*	background-repeat:no-repeat ; */
+			/*	background-position: right top; */
+			background-attachment: fixed;
+		}
+
+		@media only screen and (max-width: 600px) {
+
+			/*媒体查询media query*/
+			body {
+				background: var(--lb-color, );
+				/*备用色 兼容性*/
+				background-color: lightblue;
+				/*hsl rgba #ffffff black*/
+			}
+
+			/*选色方面 有很多在线可用的对比检查工具 也可以计算对比度 对比度大于4.5：1比较好 尽量别用相邻色*/
+		}
+
+		p.main {
+			text-align: justify;
+		}
+
+		/*p {word-wrap: break-word;}{word-break: keep-all;}这是自动换行，前一个能拆开单词*/
+		hr {
+			color: green;
+		}
+
+		/*这就对了嘛*/
+		ul {
+			list-style-type: none;
+			margin: 0;
+			/*vw视窗宽 vh视窗高 vmin视窗最小值 vmax视窗最大值*/
+			padding: 0;
+		}
+
+		li {
+			float: left;
+			position: relative;
+			/*relative根据子元素排版 absolute根据父元素，比如网格 fixed根据屏幕*/
+			display: block;
+			border-right: 1px solid black;
+		}
+
+		li.l2 {
+			float: left;
+			border-right: 1px solid black;
+		}
+
+		/*对于如何沿主轴线排放 flex 项目，有几种选择。 很常用的一种是 justify-content: center;：即 flex 子元素在 flex 容器中居中排列。 其他选择包括：
+（align-items 属性与 justify-content 类似。 回忆一下，justify-content 属性使 flex 子元素沿主轴排列。 行的主轴是水平线，列的主轴是垂直线。
+Flex 容器中，与主轴垂直的叫做 cross axis（交叉轴）。 行的交叉轴是垂直的，列的交叉轴是水平的。）
+可以对着子元素用align-self来单独设置效果 
+
+flex-start：从 flex 容器的起始位置开始排列项目。 对行来说是把项目移至左边， 对于列是把项目移至顶部。 如未设置 justify-content 的值，那么这就是默认值。
+flex-end：从 flex 容器的终止位置开始排列项目。 对行来说是把项目移至右边， 对于列是把项目移至底部。
+space-between：项目间保留一定间距地沿主轴居中排列。 第一个和最后一个项目被放置在容器边沿。 例如，在行中第一个项目会紧贴着容器左边，最后一个项目会紧贴着容器右边，然后其他项目均匀排布。
+space-around：与space-between相似，但头尾两个项目不会紧贴容器边缘，所有项目之间的空间均匀排布。
+space-evenly：头尾两个项目不会紧贴容器边缘，所有项目之间的空间均匀排布*/
+		li.l1 {
+			float: none;
+		}
+
+		li a {
+			display: block;
+			/*block元素就是增加一个，就换行 in-line则是增加一个就向右排*/
+			flex-direction: row;
+			/*对网格包装器用这个*/
+			/*flex-shrink/grow定义包装器里的盒子如果没填满缩放的倍数*/
+			background-color: #FFFFFF;
+			/*好像是透明*/
+			text-align: center;
+			padding: 14px 16px;
+
+		}
+
+		li a.active {
+			background-color: orange;
+			color: white;
+		}
+
+		li a:hover {
+			color: white;
+			background-color: orangered;
+		}
+
+		.active {
+			color: white;
+			background-color: orangered;
+		}
+
+		div.char {
+			background-color: #f2f2f2;
+			border-radius: 5px;
+			/*这其实是css3的语法*/
+			margin: 20px;
+			padding: 6px;
+		}
+
+		button {
+			/*准确的来说.button根本没有用*/
+			color: white;
+			font-size: 16px;
+			margin: 5px;
+			background-color: orange;
+		}
+
+		button: hover {
+			/*准确的来说.button: hover根本没有用*/
+			color: white;
+			font-size: 16px;
+			margin: 5px;
+			background-color: orangered;
+			animation: alr 1.5s ease-in-out infinite;
+		}
+
+		#button1 {
+			border-radius: 5px;
+			background-color: orange;
+			padding: 16px 32px;
+			text-align: center;
+			display: inline-block;
+			cursor: pointer;
+			border: orange;
+			color: white;
+		}
+
+		#button1: hover {
+			transform: translateY(-10px);
+			animation-name: alr;
+		}
+
+		/*有点问题*/
+		@keyframes alr {
+			0% {
+				background-color: blue;
+			}
+
+			50% {
+				background-color: green;
+			}
+
+			100% {
+				background-color: yellow;
+			}
+		}
+
+		/* div {background-color: rgb(255,0,0);}*/
+		/*h1 {text-decoration: overline} line-through underline确实不如用html的del和ins*/
+		h1 {
+			text-shadow: 2px 2px 2px darkred;
+		}
+
+		/*这其实也是css3*/
+		h2 {
+			text-shadow: 15px 15px darkblue;
+		}
+
+		a:link {
+			color: orangered;
+		}
+
+		a:visited {
+			color: orange;
+		}
+
+		a:hover {
+			color: red;
+		}
+
+		/*background改背景色 font-size改大小 font-family改字体*/
+		a.c1 {
+			display: block;
+			width: 20px;
+		}
+
+		img {
+			float: right;
+			border-radius: 8px;
+		}
+
+		video {
+			float: right;
+		}
+
+		input:focus {
+			background-color: orange;
+		}
+
+		.inline {
+			display: inline;
+		}
+
+		/*ul.a {list-style-type: circle;} type还有很多*/
+		#para1 {
+			text-align: center;
+			color: brown;
+		}
+
+		#ul1 {
+			background-color: yellow;
+			text-align: center;
+		}
+
+		.center {
+			text-align: center;
+		}
+
+		li a,
+		.dropbtn {
+			color: white;
+			padding: 16px;
+			font-size: 16px;
+			border: none;
+			cursor: pointer;
+			/*改光标的*/
+		}
+
+		.dropbtn,
+		.dropdown {
+			position: relative;
+			display: inline-block;
+			background-color: orange;
+		}
+
+		.dropdown-content {
+			display: none;
+			position: absolute;
+			background-color: #f9f9f9;
+			min-width: 160px;
+			box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+		}
+
+		.dropdown-content a {
+			color: black;
+			padding: 12px 16px;
+			text-decoration: none;
+			display: block;
+		}
+
+		.dropdown-content a:hover {
+			background-color: grey;
+		}
+
+		.dropdown:hover .dropdown-content {
+			display: block;
+		}
+
+		.dropdown:hover .dropbtn {
+			background-color: orangered;
+		}
+
+		div.img {
+			margin: 5px;
+			border: 1px solid grey;
+			float: left;
+			width: 180px;
+		}
+
+		div.img:hover {
+			border: 1px solid black;
+		}
+
+		div.img img {
+			width: 100%;
+			height: auto;
+		}
+
+		div.desc {
+			padding: 15px;
+			text-align: center;
+		}
+
+		div.responsive {
+			box-shadow: 15px 15px 15px grey;
+			/*说明一下三个数据 右下影 */
+		}
+
+		#divcom {
+			border: 10px dotted black;
+			padding: 5px 5px 5px 35px;
+			background: yellow;
+			background-clip: padding-box;
+			background-image: url("user.webp");
+			background-repeat: no-repeat;
+			background-position: top-left;
+			line-height: 5;
+			/*行间距*/
+		}
+
+		input[type=text],
+		select {
+			width: 100%;
+			padding: 12px 20px;
+			/*内边距*/
+			margin: 8px 0;
+			display: inline-block;
+			border: 1px solid #ccc;
+			border-radius: 4px;
+			box-sizing: border-box;
+		}
+
+		input[type=submit] {
+			width: 49%;
+			background-color: #4CAF50;
+			color: white;
+			padding: 14px 20px;
+			margin: 2px 0;
+			border: none;
+			border-radius: 4px;
+			/*圆角*/
+			cursor: pointer;
+		}
+
+		/*也能用css装点button，效果一样的*/
+
+		input[type=submit]:hover {
+			background-color: #45a049;
+		}
+
+		input[type=reset] {
+			width: 49%;
+			background-color: #4CAF50;
+			color: white;
+			padding: 14px 20px;
+			/*内边距*/
+			margin: 2px 0;
+			border: none;
+			border-radius: 4px;
+			cursor: pointer;
+		}
+
+		input[type=reset]:hover {
+			background-color: #45a049;
+		}
+
+		.lii {
+			text-align: right !important;
+		}
+
+		/* 创建三个相等的列 */
+		.column {
+			float: left;
+			width: 33.33%;
+		}
+
+		/* 列后清除浮动 */
+		.row:after {
+			content: "";
+			display: table;
+			clear: both;
+		}
+
+		.heart {
+			position: absolute;
+			margin: auto;
+			top: 0;
+			right: 0;
+			bottom: 0;
+			left: 0;
+			background-color: pink;
+			height: 50px;
+			width: 50px;
+			transform: rotate(-45deg);
+		}
+
+		.heart::after {
+			background-color: pink;
+			content: "";
+			border-radius: 50%;
+			position: absolute;
+			width: 50px;
+			height: 50px;
+			top: 0px;
+			left: 25px;
+		}
+
+		.heart::before {
+			content: "";
+			background-color: pink;
+			border-radius: 50%;
+			position: absolute;
+			width: 50px;
+			height: 50px;
+			top: -25px;
+			left: 0px;
+		}
+
+		#ball {
+			width: 100px;
+			height: 100px;
+			margin: 50px auto;
+			position: relative;
+			border-radius: 50%;
+			background: linear-gradient(35deg,
+					#ccffff,
+					#ffcccc);
+			animation-name: bounce;
+			animation-duration: 1s;
+			animation-iteration-count: infinite;
+		}
+
+		@keyframes bounce {
+			0% {
+				top: 0px;
+			}
+
+			50% {
+				top: 249px;
+				width: 130px;
+				height: 70px;
+			}
+
+			100% {
+				top: 0px;
+			}
+		}
+
+		#customers {
+			font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+			width: 100%;
+			border-collapse: collapse;
+		}
+
+		#customers td,
+		#customers th {
+			font-size: 1em;
+			border: 1px solid #98bf21;
+			padding: 3px 7px 2px 7px;
+		}
+
+		#customers th {
+			font-size: 1.1em;
+			text-align: left;
+			padding-top: 5px;
+			padding-bottom: 4px;
+			background-color: #A7C942;
+			color: #ffffff;
+		}
+
+		#customers tr.alt td {
+			color: #000000;
+			background-color: #EAF2D3;
+		}
+	</style>
+	<!--hr color 非但没用 还不允许我在他后面直接注释-->
+	<!--<base href= "album.html">这个东西影响我做书签-->
+	<script>
+		function displayDate() {
+			document.getElementById("demo").innerHTML = Date();
+		}//这行之后是注释
+		/*多行注释符号*/
+		var answer = "Yes minister!";//单引号也行，很方便
+		var x, y, z = 1;//舒服 数字是统一类型
+		var cars = new array();//这是数组
+		cars[0] = "volvo";
+		cars[1] = "audi";
+		cars[2] = "bmw";
+
+	</script>
+</head>
+
+<body>
+	<!--bgcolor-->
+
+	<!-- 好想搞个外链歌曲   -->
+	<!--搞得我都不敢用iframe了-->
+
+	<h1 style="color:red">胜利之日 Winning day</h1>
+	<h2 style="color:blue"> music:karakuri</h2>
+	<p><a href="#C1">直接填表加入战争</a></p>
+	<audio autoplay="autoplay" controls="controls" loop="loop" preload="auto" src="winningday.mp3">
+		你的浏览器不支持audio，所以我们不能放歌
+	</audio>
+	<video width="320" height="240" controls="controls">
+		<source src="bg_pv.mp4" type="video/mp4">
+		您的浏览器不支持video
+	</video>
+
+	<ul class="main">
+		<li class="active"><a href="album.html">大帝国</a></li>
+		<li><a href="album.html">第二帝国</a></li>
+		<li><a href="album.html">复辟帝国</a></li>
+		<li>
+			<div class="dropdown">
+				<a href="album.html">第四帝国</a>
+				<div class="dropdown-content">
+					<a href="album.html">科技</a>
+					<a href="album.html">经济</a>
+					<a href="album.html">军事</a>
+				</div>
+		</li>
+		</div>
+		<li class="lii">
+			<form>
+				<input type="text" name="search" placeholder="搜索...">
+			</form>
+		</li>
+	</ul><br><br>
+
+
+	<h3 id="ex">开发者介绍</h3>
+	<p id="eat">可怜的段落</p>
+	<script>
+		function exchange() {
+			x = document.getElementById("ex");
+			x.innerHTML = "<！错误----数据丢失>";
+		}
+		var breakfast = {
+			firstdish: "bread",
+			drink: "orange juice",
+			lastdish: "jelly"
+		};
+		document.getElementById("eat").innerHTML =
+			breakfast.firstdish + " 不错 " + breakfast.drink + " 好喝" + breakfast.lastdish + "惊喜";//也能用breakfast["firstdish"]
+/*var breakfast = {
+																			firstdish:"bread",
+																			drink:"orange",
+																			lastdish:"jelly",
+																			fulldish : function() //对象方法是函数型的属性，看下面的调用
+																			{
+																				return this.firstdish + " " + this.drink + " " + this.lastdish; //this的运用
+																			}
+																			var dinner = {
+																			breakfast.function.call(dinner);跨越式调用对象方法用call
+																			}
+																		};
+																		document.getElementById("eat").innerHTML = breakfast.fulldish();*/
+	</script>
+	<!--x.style.color换颜色-->
+	<!--<script src="......">外链js</script>-->
+	<button type="button" onclick="exchange()">不要点击</button>
+	<a href="album.html">
+		<p>这是<b>优妮"<i>“先辈”</i>"</b>
+	</a></p>
+	<script>
+		function changeimage() {
+			element = document.getElementById('exi')
+			if (element.src.match("10")) {
+				element.src = "11.jpg";
+			}
+			else {
+				element.src = "10.jpg";
+			}
+		}
+	</script>
+	<img id="exi" onclick="changeimage()" loading="u2" src="11.jpg" width="380" height="240" alt="u2">
+	<h3>学习方案</h3><br>
+	<p><a href="https://www.runoob.com">这是学习资料<br>
+			<!--外链呢？老子的外链呢？-->
+			<del>其实我真想直接上网</del>
+		</a></p><br>
+	<p>点击这个按钮，来调用带参数的函数。<b>能输入而不是按按钮就太爽了</b></p>
+	<p>渐变是好东西，但是怎么发挥好他的装饰作用呢</p>
+	<p>必须扒代码，不然你23d转换和css动画根本做不出来，更不必说h5小游戏，你像是多列这样的功能也得扒</p>
+	<button id="button1" class="button1" onclick="myFunction('Stun Norl','conqueror')">Norl点击这里</button>
+	<button onclick="myFunction('George William','Warrior')">George点击这里</button>
+	<button onclick="dagree()">time</button>
+	<button onclick="lucky()">试试手气</button>
+	<button onclick="message()">查看消息</button>
+	<button onclick="this.style.display='none'">姐姐</button>
+	<p id="dagree"></p>
+	<p id="dagree2">kk</p>
+	<p id="lucky"></p>
+	<p id="throw"></p>
+	<script>
+		function myFunction(name, job) {
+			alert("Welcome " + name + ", the " + job);//字符串里能有空格 要么就 + " "
+		}//字符串 + 数字 会把数字变成字符串
+		var bre = breakfast[2];
+		document.write("<p>" + bre + "</p>");//为什么？
+		function dagree() {
+			var x = " ";
+			var time = new Date().getHours();
+			if (time <= 10) {
+				x = "Good morning.Now the time is " + Date();
+			}
+			else if (time <= 19 && time > 10) {
+				x = "Good day.Now the time is " + Date();
+			}
+			else {
+				x = "Good evening.Now the time is " + Date();
+			}
+			document.getElementById("dagree").innerHTML = x;
+		}//也能用case（time<=10）：x = "..."代替else if
+		var k = Date().getSeconds();
+		document.getElementById("dagree2").innerHTML = k;
+		/*var d= new Date.getDay();
+		switch(d)
+		{
+			case 0:{
+				......;
+				break;}//case后庭必有break
+			case 1:{
+				......;
+				break;}
+		}
+		document.getElementById("...").innerHTML=...*/
+		function lucky() {
+			var r = Math.random();
+			var x = " "
+			if (r > 0.5) {
+				x = "现在手气不错呦！";
+			}
+			else {
+				x = "下次手气会更好。";
+			}
+			document.getElementById("lucky").innerHTML = x
+		}
+		var txt = " ";
+		function message() {
+			try {
+				dagggggggger("反正是个错的");
+			}
+			catch (err) {
+				txt = "oops！有个错误发生了\n\n";
+				txt += "错误描述: " + err.message + "\n\n ";
+				txt += "点击确定继续\n\n";
+				alert(txt);//别忘了
+				/*		throw "出错了";
+						document.getElementById("throw").innerHTML= err;*/
+			}
+			//finally 不论是try还是catch都会运行
+		}
+	</script>
+	<hr>
+	<h3 style="text-align:center">开发设备与补给</h3>
+
+
+	<h3 id="para1">开发设备与补给（有js）</h3>
+	<p id="demo">时间</p>
+	<button type="button" onclick="displayDate()">看时间</button>
+	<button type="button" onclick="alert('你好！')">你好</button>
+	<!--流溪上当网-->
+	<p>今日<ins>午餐</ins><br><sup>清蒸<small>鲈鱼</small></sup><br><sub>红烧<big>排骨</big></sub></p>
+	<pre>孜然羊排
+蚂蚁上树
+鱼香肉丝</pre>
+	<p style="color:brown"> 老头炒苹果 </p>
+	<!--怎么内链也不行啊-->
+	<button onclick="food()">查看军粮</button>
+	<p id="food"> </p>
+	<script>
+		function food() {
+			food = ["军粮面团", "军配面包", "功能饮料", "军配咖啡", "帝国肉罐头", "烤肉串", "蜂蜜酒"];
+			var x = " ";
+			for (var i = 0; i < food.length; i++) {//也可以用while代替for
+				x = x + (i + 1) + "." + food[i] + "<br>";//这个括号真牛逼
+			}//再循环当中 用if（ ... ）{ break/continue } break 是停止循环，也能跳出某种代码块  continue 是跳过这次循环
+			document.getElementById("food").innerHTML = x;//可以用+"123" 也可以用+String(123)
+		}
+	</script>
+
+	<!--<script >
+	food=["军粮面团","军配面包","功能饮料","军配咖啡","帝国肉罐头","烤肉串","蜂蜜酒"]
+	for (var i = 0 ; i<food.length; i++) {
+		document.write(i + "." + food[i] + "<br>");
+	}
+</script>--><br>
+
+	<p>请把鼠标移动到单词上，可以看到鼠标指针发生变化：</p>
+	<span style="cursor:auto">auto</span><br>
+	<span style="cursor:crosshair">crosshair</span><br>
+	<span style="cursor:default">default</span><br>
+	<span style="cursor:e-resize">e-resize</span><br>
+	<span style="cursor:help">help</span><br>
+	<span style="cursor:move">move</span><br>
+	<span style="cursor:n-resize">n-resize</span><br>
+	<span style="cursor:ne-resize">ne-resize</span><br>
+	<span style="cursor:nw-resize">nw-resize</span><br>
+	<span style="cursor:pointer">pointer</span><br>
+	<span style="cursor:progress">progress</span><br>
+	<span style="cursor:s-resize">s-resize</span><br>
+	<span style="cursor:se-resize">se-resize</span><br>
+	<span style="cursor:sw-resize">sw-resize</span><br>
+	<span style="cursor:text">text</span><br>
+	<span style="cursor:w-resize">w-resize</span><br>
+	<span style="cursor:wait">wait</span><br><br>
+
+	<!--js中声明变量(var x,y;)总会提升到函数体之前但是初始化(var x = 1)的后半赋值部分不会 本身是个坏习惯希望没人用-->
+	<!--在脚本或函数头部添加"use strict"来进入严格模式，-->
+	<table border="1">
+		<caption>表格与方向</caption>
+		<tr>
+			<th colspan="2">Header1</th>
+			<!--colspan开横 rowspan开竖-->
+		</tr>
+		<tr>
+			<td>
+				<ul>西北
+					<li class="l1">西北1</li>
+					<li class="l1">西北2</li>
+				</ul>
+			<td>东北</td>
+		</tr>
+		<tr>
+			<td>西南</td>
+			<td style="text-align: center">
+				<table border="1" cellpadding="10">东南
+			</td>
+		<tr>
+			<td>1 </td>
+			<td>2 </td>
+		</tr>
+		<tr>
+			<td>3 </td>
+			<td>4 </td>
+		</tr>
+		</td>
+	</table>
+	<!--不要忘了小table-->
+	</tr>
+	</table>
+
+	<table id="customers">
+		<tr>
+			<th>Company</th>
+			<th>Contact</th>
+			<th>Country</th>
+		</tr>
+		<tr>
+			<td>Alfreds Futterkiste</td>
+			<td>Maria Anders</td>
+			<td>Germany</td>
+		</tr>
+		<tr class="alt">
+			<td>Berglunds snabbköp</td>
+			<td>Christina Berglund</td>
+			<td>Sweden</td>
+		</tr>
+		<tr>
+			<td>Centro comercial Moctezuma</td>
+			<td>Francisco Chang</td>
+			<td>Mexico</td>
+		</tr>
+		<tr class="alt">
+			<td>Ernst Handel</td>
+			<td>Roland Mendel</td>
+			<td>Austria</td>
+		</tr>
+		<tr>
+			<td>Island Trading</td>
+			<td>Helen Bennett</td>
+			<td>UK</td>
+		</tr>
+		<tr class="alt">
+			<td>Königlich Essen</td>
+			<td>Philip Cramer</td>
+			<td>Germany</td>
+		</tr>
+		<tr>
+			<td>Laughing Bacchus Winecellars</td>
+			<td>Yoshi Tannamuri</td>
+			<td>Canada</td>
+		</tr>
+		<tr class="alt">
+			<td>Magazzini Alimentari Riuniti</td>
+			<td>Giovanni Rovelli</td>
+			<td>Italy</td>
+		</tr>
+		<tr>
+			<td>North/South</td>
+			<td>Simon Crowther</td>
+			<td>UK</td>
+		</tr>
+		<tr class="alt">
+			<td>Paris spécialités</td>
+			<td>Marie Bertrand</td>
+			<td>France</td>
+		</tr>
+	</table>
+
+	<ul id="ul1">
+		<li class="l1">怎么加到表里啊</li>
+		<ul>
+			<li class="l1">搞一个小无序</li>
+			<li class="l1">怎么样</li>
+			<li class="l1">这里可以套娃小列表</li>
+		</ul>
+		<li class="l1">我也不知道</li>
+		<ol type="I">
+			<!---这有个问题start用不了--->
+			<!-- 这里可以用大小写字母罗马数字来做有序列表-->
+			<li class="l1">要不找个人吧</li>
+			<li class="l1">好恐怖啊</li>
+		</ol>
+	</ul>
+
+	<canvas id="Canvas1" width="200" height="100" style="border: 1px solid grey;">您的浏览器不支持canvas</canvas>
+	<script>
+		var c = document.getElementById("Canvas1");
+		var ctx = c.getContext("2d");
+		ctx.moveTo(0, 0);
+		ctx.lineTo(200, 100);
+		ctx.stroke();
+		var ctx2 = c.getContext("2d");
+		ctx2.font = "10px Arial";
+		ctx2.fillText("有用canvas这闲工夫为什么不去搞素材？", 10, 50); 
+	</script>
+	<p>其实是因为canvas可以为游戏处理图像</p>
+	<h3>拖放</h3>
+	<p>h5拖放是个不错的功能，但是感觉菜鸟上的实例不行，一般我们都是做页边小组件和桌宠，这样的拖动才有意义</p>
+	<h3>视频音频</h3>
+	<p>怎么用adplayer？ </p>
+
+	<p><a id="C1"></a></p>
+	<div class="char">
+		<p style="text-align: center;" accesskey="a"><b>注册/登录</b></p>
+		<!--搞个校园女生评选呗-->
+		<!--<form action="demo-form.php">-->
+		<!--发到服务器上的这里，也许是个后端程序-->
+		<fieldset style="color: blue">
+			<legend>The theory of infinite war</legend>
+			First name:<input type="text" name="firstname" placeholder="this is placeholder text" required=""><br>
+			<!--required是必填项-->
+			Last name:<input type="text" name="name"><br>
+			<!--映射两个name，是同时空着才会提醒-->
+			Password:<input type="password" name="password"><br>
+			<p>Select your party</p>
+			<input type="radio" name="party" value="imperal">Imperal<br>
+			<input type="radio" name="party" value="union">Union<br>
+			<label for="Swordman"><input id="loving" type="checkbox" name="personality" checked> Swordman</label>
+			<!--checkbox是复选要嵌套在label里 checked表示初始默认-->
+			<label for="Archer"><input id="loving" type="checkbox" name="personality"> Archer</label>
+			<p>Place</p>
+			<!--<form name="register" action="" onsubmit="rtnck()" method="post" >不要把多个函数放在一个form里-->
+			<form>
+				<fieldset>
+					<!--给盲人-->
+					<select name="campaign">
+						<option value="norlburgia">Norlburgia</option>
+						<option value="kherchatec">Kherchatez</option>
+						<option value="hiller plain">Hiller plain</option>
+						<option value="ymeral">Ymeral</option>
+					</select>
+					<input type="date" name="datepicker">
+					<p>Finally,we would like to have your age.</p>
+					<input id="age" value="14" />
+					<p>Is it the right time to join us?</p>
+					<button onclick="cka()">Check</button>
+					<p id="ckb"></p><br>
+					<script>
+						function cka()//为什么跳出啊......菜鸟教程上调试也没出问题啊
+						{
+							var age, joinable;
+							age = document.getElementById("age").value;//想加一个非数字提示 不知!isNaN行不行
+							joinable = (age < 14) ? "Sorry,it is not" : "Yes,Welcome to join us!";
+							document.getElementById("ckb").innerHTML = joinable;
+						}
+						function rtnck() {
+							var x = document.forms["register"]["firstname"].value;
+							if (x == null || x == "") {
+								alert("你没有填写姓名\n");
+								return false;
+							}
+						}
+					</script>
+					<input type="submit" value="Start">
+					<input type="reset" value="Reset">
+					<input type="button" value="Button">
+					<button class="button">button2</button>
+					<p><small>Your information will be submit to <i>The Congress Of War</i>&copy</small></p>
+				</fieldset>
+			</form>
+		</fieldset>
+	</div>
+	<!--wtmsb微甜麻薯棒-->
+
+	<hr>
+	<textarea rows="20" cols="50">
+<p>这里的东西会被强制文本化</p>
+换个行XD
+<!--注释掉了吗-->
+</textarea>
+	<br>
+
+	<div class="dropdown">
+		<button class="dropbtn">下拉菜单</button>
+		<div class="dropdown-content">
+			<a href="album.html">帝国战争1 </a>
+			<a href="album.html">帝国战争2 </a>
+			<a href="album.html">帝国战争3 </a>
+		</div>
+	</div>
+	<br>
+
+	<div class="responsive">
+		<figure>
+			<!--给盲人看-->
+			<div class="img">
+				<a target="_blank" href="theme.png">
+					<img src="theme.png">
+				</a>
+				<figcaption class="desc">中2开场</figcaption>
+			</div>
+		</figure>
+	</div>
+
+	<div class="responsive">
+		<div class="img">
+			<a target="_blank" href="m1.png">
+				<img src="m1.png">
+			</a>
+			<div class="desc">中2开战</div>
+		</div>
+	</div>
+
+	<div class="responsive">
+		<div class="img">
+			<a target="_blank" href="m2.png">
+				<img src="m2.png">
+			</a>
+			<div class="desc">中2终战</div>
+		</div>
+	</div>
+	<hr>
+
+	<div class="row">
+		<div class="column">
+			<div id="divcom" style="transform: skewX(24deg);">
+				<h3>第一列</h3>
+				<p>菜鸟教程 - 学的不仅是技术，更是梦想！菜鸟教程 - 学的不仅是技术，更是梦想！菜鸟教程 - 学的不仅是技术，更是梦想！菜鸟教程 - 学的不仅是技术，更是梦想！</p>
+			</div>
+		</div>
+
+		<div class="column">
+			<h3>第二列</h3>
+			<p>菜鸟教程 - 学的不仅是技术，更是梦想！菜鸟教程 - 学的不仅是技术，更是梦想！菜鸟教程 - 学的不仅是技术，更是梦想！菜鸟教程 - 学的不仅是技术，更是梦想！</p>
+		</div>
+
+		<div class="column">
+			<h3>第三列</h3>
+			<p>菜鸟教程 - 学的不仅是技术，更是梦想！菜鸟教程 - 学的不仅是技术，更是梦想！菜鸟教程 - 学的不仅是技术，更是梦想！菜鸟教程 - 学的不仅是技术，更是梦想！</p>
+		</div>
+		<div class="heart"></div>
+		<div id="ball"></div>
+	</div>
+
+	<div id="hello-vue" class="demo">
+		{{ message }}
+	</div>
+
+	<script>
+		const HelloVueApp = {
+			data() {
+				return {
+					message: 'Hello Vue!!'
+				}
+			}
+		}
+
+		Vue.createApp(HelloVueApp).mount('#hello-vue')
+	</script>
+
+
+
+	<script>
+		document.write("hello script")
+	</script>
+	<noscript>抱歉，你的浏览器不支持Javascript</noscript>
+	<p id="para1">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp老头炒苹果&lt;noscript&gt;</p>
+	<!--用不了<>，这涉及字符实体问题-->
+	<!--如果你想加空格用&nbsp-->
+
+</body>
+
+</html>
